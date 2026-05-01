@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NewsForge AI — Automated AI Newsletter Pipeline</title>
+  <meta name="description" content="Turn RSS feeds into polished newsletters automatically. NewsForge AI uses Claude AI to summarise, curate, and draft your newsletter — hands-free." />
+  <meta property="og:title" content="NewsForge AI — Automated AI Newsletter Pipeline" />
+  <meta property="og:description" content="From RSS ingestion to Beehiiv delivery, fully automated. Save 10+ hours per week." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6C47FF;
+      --primary-dark: #5236d4;
+      --accent: #00D4B4;
+      --bg: #0A0B0F;
+      --surface: #13151C;
+      --surface2: #1C1F2A;
+      --border: #2A2D3A;
+      --text: #F0F2FF;
+      --muted: #8B8FA8;
+      --white: #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; background: rgba(10,11,15,0.85);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .logo { font-weight: 800; font-size: 1.1rem; color: var(--white); text-decoration: none; }
+    .logo span { color: var(--primary); }
+    nav ul { display: flex; gap: 2rem; list-style: none; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
+    nav a:hover { color: var(--white); }
+    .btn { display: inline-block; padding: .65rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all .2s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--primary); color: var(--white); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108,71,255,.4); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-lg { padding: .85rem 2rem; font-size: 1rem; }
+
+    /* SECTIONS */
+    section { padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--primary); margin-bottom: .75rem; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.15; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.5rem); font-weight: 700; line-height: 1.25; }
+    h3 { font-size: 1.2rem; font-weight: 600; }
+    .text-gradient { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .subtitle { font-size: 1.15rem; color: var(--muted); max-width: 600px; }
+
+    /* HERO */
+    #hero { text-align: center; padding: 7rem 1.5rem 5rem; }
+    .badge { display: inline-block; background: rgba(108,71,255,.15); color: var(--primary); border: 1px solid rgba(108,71,255,.3); padding: .35rem 1rem; border-radius: 999px; font-size: .8rem; font-weight: 600; margin-bottom: 1.5rem; }
+    #hero h1 { margin-bottom: 1.25rem; }
+    #hero .subtitle { margin: 0 auto 2rem; }
+    .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .hero-stats { display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap; margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 1.8rem; font-weight: 800; color: var(--white); }
+    .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+
+    /* PROBLEM */
+    #problem { background: var(--surface); border-radius: 20px; padding: 4rem 3rem; }
+    .problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+    .problem-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .problem-icon { font-size: 1.8rem; margin-bottom: .75rem; }
+    .problem-card h3 { margin-bottom: .5rem; font-size: 1rem; }
+    .problem-card p { font-size: .875rem; color: var(--muted); }
+
+    /* SOLUTION */
+    .steps { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2.5rem; }
+    .step { display: flex; gap: 1.5rem; align-items: flex-start; }
+    .step-num { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+    .step-content h3 { margin-bottom: .4rem; }
+    .step-content p { color: var(--muted); font-size: .9rem; }
+
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: border-color .2s; }
+    .feature-card:hover { border-color: var(--primary); }
+    .feature-icon { font-size: 1.75rem; margin-bottom: 1rem; }
+    .feature-card h3 { margin-bottom: .5rem; }
+    .feature-card p { font-size: .875rem; color: var(--muted); }
+
+    /* PRICING */
+    #pricing { text-align: center; }
+    #pricing h2 { margin-bottom: .75rem; }
+    #pricing > .subtitle { margin: 0 auto 2.5rem; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; text-align: left; }
+    .plan { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; transition: border-color .25s, transform .25s; }
+    .plan:hover { border-color: var(--primary); transform: translateY(-4px); }
+    .plan.featured { border-color: var(--primary); background: linear-gradient(135deg, rgba(108,71,255,.1), rgba(0,212,180,.05)); }
+    .plan-badge { background: var(--primary); color: var(--white); font-size: .7rem; font-weight: 700; padding: .25rem .75rem; border-radius: 999px; display: inline-block; }
+    .plan-name { font-size: 1.1rem; font-weight: 700; }
+    .plan-price { font-size: 2.4rem; font-weight: 800; color: var(--white); }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .plan-desc { font-size: .875rem; color: var(--muted); }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: .6rem; flex: 1; }
+    .plan-features li { font-size: .875rem; display: flex; align-items: flex-start; gap: .5rem; }
+    .plan-features li::before { content: "✓"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .plan .btn { margin-top: auto; text-align: center; width: 100%; }
+    .trial-note { font-size: .75rem; color: var(--muted); text-align: center; margin-top: 1.5rem; }
+
+    /* SOCIAL PROOF */
+    #social-proof { background: var(--surface); border-radius: 20px; padding: 4rem 3rem; text-align: center; }
+    .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; text-align: left; }
+    .testimonial { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
+    .testimonial p { font-size: .9rem; font-style: italic; color: var(--text); margin-bottom: 1rem; }
+    .testimonial-author { display: flex; align-items: center; gap: .75rem; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+    .author-info strong { display: block; font-size: .875rem; }
+    .author-info small { color: var(--muted); font-size: .78rem; }
+
+    /* FAQ */
+    .faq-list { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; cursor: pointer; }
+    details[open] { border-color: var(--primary); }
+    summary { font-weight: 600; font-size: .95rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    summary::after { content: "+"; font-size: 1.25rem; color: var(--primary); transition: transform .2s; }
+    details[open] summary::after { content: "−"; }
+    details p { margin-top: .75rem; font-size: .9rem; color: var(--muted); line-height: 1.7; }
+
+    /* CTA BANNER */
+    #cta-banner { background: linear-gradient(135deg, var(--primary), #4B2DDE); border-radius: 20px; padding: 4rem 3rem; text-align: center; }
+    #cta-banner h2 { color: var(--white); margin-bottom: 1rem; }
+    #cta-banner p { color: rgba(255,255,255,.75); margin-bottom: 2rem; }
+    #cta-banner .btn-primary { background: var(--white); color: var(--primary); }
+    #cta-banner .btn-primary:hover { background: #eee; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 2.5rem 1.5rem; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 1rem; }
+    footer p { font-size: .85rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .85rem; text-decoration: none; }
+    .footer-links a:hover { color: var(--white); }
+
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      #problem, #social-proof, #cta-banner { padding: 3rem 1.5rem; }
+      .step { flex-direction: column; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#"><span>News</span>Forge AI</a>
+  <ul>
+    <li><a href="#solution">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="badge">🤖 Powered by Claude AI</div>
+  <h1>Your newsletter,<br /><span class="text-gradient">written by AI.</span></h1>
+  <p class="subtitle">NewsForge AI turns RSS feeds into polished newsletters automatically — from ingestion to Beehiiv delivery. Save 10+ hours every week.</p>
+  <div class="hero-cta">
+    <a href="#pricing" class="btn btn-primary btn-lg">Start 7-Day Free Trial →</a>
+    <a href="#solution" class="btn btn-outline btn-lg">See How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-number">10+</div>
+      <div class="stat-label">Hours saved / week</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">95%</div>
+      <div class="stat-label">Cost reduction vs manual</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">&lt;60s</div>
+      <div class="stat-label">From RSS to draft</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">∞</div>
+      <div class="stat-label">RSS sources supported</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section>
+  <div id="problem">
+    <div class="section-label">The Problem</div>
+    <h2>Manual newsletter curation is <span class="text-gradient">killing your productivity</span></h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">⏰</div>
+        <h3>It takes forever</h3>
+        <p>Researching, reading, and summarising articles takes 8–12 hours per issue. That's time you should spend on strategy.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💸</div>
+        <h3>Expensive writers</h3>
+        <p>Hiring freelance writers for weekly newsletters costs $500–$2,000 per month — without consistency guarantees.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">😩</div>
+        <h3>Inconsistent quality</h3>
+        <p>Manual processes lead to missed deadlines, varying tone, and burnout. Your subscribers notice.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📊</div>
+        <h3>No scalability</h3>
+        <p>Want to increase frequency or add new topics? The manual approach simply doesn't scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="section-label">How It Works</div>
+  <h2>Automated in <span class="text-gradient">3 simple steps</span></h2>
+  <p class="subtitle" style="margin-top:.75rem">Set it up once, get polished newsletters forever.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Connect your RSS sources</h3>
+        <p>Add any RSS feed — TechCrunch, Hacker News, industry blogs, or custom sources. We poll them every 6 hours automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Claude AI summarises & curates</h3>
+        <p>Our Claude-powered pipeline reads every article, writes a concise 3-sentence summary, extracts the key takeaway, and scores relevance — all without human input.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Drafts land in Beehiiv automatically</h3>
+        <p>Polished newsletter drafts are pushed to your Beehiiv account as drafts. Review, click send — done. Your data lives in Airtable for full visibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">Features</div>
+  <h2>Everything you need to <span class="text-gradient">run newsletters at scale</span></h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>Claude AI Summarisation</h3>
+      <p>Industry-leading AI writes crisp, on-brand summaries and extracts actionable takeaways from any article.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>Multi-Source RSS Ingestion</h3>
+      <p>Monitor unlimited RSS feeds across categories. New articles are detected and queued automatically every 6 hours.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✉️</div>
+      <h3>Beehiiv / Buttondown Integration</h3>
+      <p>Drafts are pushed directly to your newsletter platform. No copy-paste, no formatting headaches.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3>Airtable Dashboard</h3>
+      <p>Every article, summary, and send status tracked in Airtable. Full visibility, filtering, and analytics at a glance.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Make.com Automation</h3>
+      <p>Reliable, enterprise-grade automation engine runs your pipeline 24/7. Retry logic, error handling included.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Secure & Scalable</h3>
+      <p>Your API keys stay private. The architecture scales from 1 newsletter to 100 with no code changes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2>Simple, transparent <span class="text-gradient">pricing</span></h2>
+  <p class="subtitle">Start with a 7-day free trial. No credit card required on Starter &amp; Growth.</p>
+  <div class="pricing-grid">
+
+    <div class="plan">
+      <div>
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$49<span>/mo</span></div>
+        <div class="plan-desc">Perfect for solo newsletter creators and small teams getting started.</div>
+      </div>
+      <ul class="plan-features">
+        <li>4 newsletters per month</li>
+        <li>1 team seat</li>
+        <li>Unlimited RSS sources</li>
+        <li>Claude AI summaries</li>
+        <li>Beehiiv / Buttondown integration</li>
+        <li>Airtable dashboard</li>
+        <li>Email support</li>
+      </ul>
+      <a href="STRIPE_STARTER_URL" class="btn btn-outline">Start Free Trial →</a>
+    </div>
+
+    <div class="plan featured">
+      <div>
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name" style="margin-top:.5rem">Growth</div>
+        <div class="plan-price">$149<span>/mo</span></div>
+        <div class="plan-desc">For growing media teams and agencies running multiple newsletters.</div>
+      </div>
+      <ul class="plan-features">
+        <li>16 newsletters per month</li>
+        <li>3 team seats</li>
+        <li>Everything in Starter</li>
+        <li>Priority AI processing</li>
+        <li>Custom prompt templates</li>
+        <li>Slack notifications</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="STRIPE_GROWTH_URL" class="btn btn-primary">Start Free Trial →</a>
+    </div>
+
+    <div class="plan">
+      <div>
+        <div class="plan-name">Agency</div>
+        <div class="plan-price">$399<span>/mo</span></div>
+        <div class="plan-desc">Unlimited scale for agencies managing newsletters for multiple clients.</div>
+      </div>
+      <ul class="plan-features">
+        <li>Unlimited newsletters</li>
+        <li>10 team seats</li>
+        <li>Everything in Growth</li>
+        <li>White-label options</li>
+        <li>Custom integrations</li>
+        <li>Dedicated account manager</li>
+        <li>SLA guarantee</li>
+      </ul>
+      <a href="STRIPE_AGENCY_URL" class="btn btn-outline">Get Started →</a>
+    </div>
+
+  </div>
+  <p class="trial-note">✓ 7-day free trial on Starter &amp; Growth &nbsp;|&nbsp; ✓ Cancel anytime &nbsp;|&nbsp; ✓ Secure payments via Stripe</p>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section>
+  <div id="social-proof">
+    <div class="section-label">Beta Testimonials</div>
+    <h2>Loved by <span class="text-gradient">early adopters</span></h2>
+    <div class="testimonials">
+      <div class="testimonial">
+        <p>"NewsForge AI cut our newsletter production time from 12 hours to under 30 minutes. It's like having a full-time editor who never sleeps."</p>
+        <div class="testimonial-author">
+          <div class="avatar">S</div>
+          <div class="author-info">
+            <strong>Sarah K.</strong>
+            <small>Head of Content, SaaS startup</small>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p>"We run newsletters for 8 clients. Before NewsForge, that was a team of 4. Now it's just me and the AI. Our margins doubled overnight."</p>
+        <div class="testimonial-author">
+          <div class="avatar">M</div>
+          <div class="author-info">
+            <strong>Marcus T.</strong>
+            <small>Founder, Content Agency</small>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p>"The Airtable integration means I can see exactly what the AI is doing at every step. Total transparency, total control."</p>
+        <div class="testimonial-author">
+          <div class="avatar">J</div>
+          <div class="author-info">
+            <strong>Jenna R.</strong>
+            <small>Newsletter creator, 28k subscribers</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-label">FAQ</div>
+  <h2>Frequently Asked <span class="text-gradient">Questions</span></h2>
+  <div class="faq-list">
+    <details>
+      <summary>How does the AI summarisation actually work?</summary>
+      <p>We use Anthropic's Claude API to process each article. Our custom prompt instructs Claude to write a 3-sentence summary, extract the single most important takeaway, and score the article's relevance. The results are stored in your Airtable base for full auditability.</p>
+    </details>
+    <details>
+      <summary>Can I use my own RSS feeds and newsletter topics?</summary>
+      <p>Absolutely. You can add any public RSS feed — from major publications to niche industry blogs. There's no limit on the number of sources. You can also configure topics and keywords to filter articles by relevance score.</p>
+    </details>
+    <details>
+      <summary>Which newsletter platforms do you support?</summary>
+      <p>We currently support Beehiiv and Buttondown out of the box. Additional platforms (Mailchimp, ConvertKit, Ghost) are on the roadmap. The Make.com architecture makes it straightforward to add any platform with an API.</p>
+    </details>
+    <details>
+      <summary>Do I need technical skills to set up NewsForge AI?</summary>
+      <p>Basic familiarity with Make.com and Airtable is helpful, but we provide full setup documentation and onboarding support. Most customers are up and running within 2 hours of signing up.</p>
+    </details>
+    <details>
+      <summary>What happens after my free trial ends?</summary>
+      <p>At the end of your 7-day trial, you'll be automatically moved to the paid plan you selected. You can cancel anytime before the trial ends with no charge. You manage your subscription directly via the Stripe Customer Portal.</p>
+    </details>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section>
+  <div id="cta-banner">
+    <h2>Ready to automate your newsletter?</h2>
+    <p>Join beta testers saving 10+ hours per week. Start your free trial today — no credit card required.</p>
+    <a href="#pricing" class="btn btn-primary btn-lg">Start 7-Day Free Trial →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 NewsForge AI. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="mailto:hello@newsforge.ai">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
